@@ -11,14 +11,12 @@ class FileStorage:
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
         if cls:
-            _dic = {}
+            class_dict = {}
             for key, value in self.__objects.items():
-                _cls = key.split('.')[0]
-                if cls.__name__ == _cls:
-                    _dic.update({key: value})
-            return _dic
-        else:
-            return self.__objects
+                if cls.__name__ in key:
+                    class_dict[key] = value
+            return class_dict
+        return self.__objects
 
     def new(self, obj):
         """Adds new object to storage dictionary"""
@@ -58,16 +56,12 @@ class FileStorage:
             pass
 
     def delete(self, obj=None):
-        """Delete obj from __objects if it's inside"""
+        """delete obj from __objects if it’s inside"""
         if obj:
-            id_obj = obj.__class__.__name__ + "." + obj.id
-            if id_obj in self.__objects.keys():
-                del self.__objects[id_obj]
-                self.save()
+            if obj in FileStorage.__objects.values():
+                del FileStorage.__objects[obj.__class__
+                                          .__name__ + "." + obj.id]
 
     def close(self):
-        """
-        Call reload method for
-        Deserializing JSON file to objects
-        """
+        """call to reload method that deserializes the JSON"""
         self.reload()
